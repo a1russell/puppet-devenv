@@ -3,6 +3,8 @@ class devenv ($user = 'vagrant') {
   include apt
   Class['apt'] -> Package <| |>
 
+  package { 'linux-headers-amd64': }
+
   package { 'lightdm': }
 
   file { '/etc/lightdm/lightdm.conf':
