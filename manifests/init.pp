@@ -200,6 +200,13 @@ class devenv ($user = 'vagrant') {
                      'application finder panel launcher']]
   }
 
+  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml":
+    source => 'puppet:///modules/devenv/xfce4-power-manager.xml',
+    owner => $user,
+    group => $user,
+    require => Exec['xfce-perchannel-xml directory']
+  }
+
   file { 'idea shortcut':
     path => "/home/${user}/.local/share/applications/idea.desktop",
     owner => $user,
