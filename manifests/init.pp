@@ -62,10 +62,12 @@ class devenv ($user = 'vagrant') {
     require => Class['googlechrome']
   }
 
-  file { "/home/${user}/.config/xfce4/helpers.rc":
-    owner => $user,
-    group => $user,
-    source => 'puppet:///modules/devenv/helpers.rc',
+  augeas { 'set xfce default browser':
+    lens => 'Shellvars.lns',
+    incl => "/home/${user}/.config/xfce4/helpers.rc",
+    changes => [
+      'set WebBrowser google-chrome'
+    ],
     require => Class['googlechrome']
   }
 
