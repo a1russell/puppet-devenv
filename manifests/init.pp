@@ -30,6 +30,13 @@ class devenv ($user = 'vagrant') {
     require => Package['xfce4']
   }
 
+  exec { 'echo "mode: off" > .xscreensaver':
+    creates => "/home/${user}/.xscreensaver",
+    cwd => "/home/${user}",
+    path => '/bin',
+    user => $user
+  }
+
   package { 'vim-gtk': }
 
   package { 'git': }
