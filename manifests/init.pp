@@ -25,6 +25,11 @@ class devenv ($user = 'vagrant') {
     require => Package['xfce4']
   }
 
+  file { '/etc/X11/Xsession.d/0profile':
+    source => 'puppet:///modules/devenv/0profile',
+    require => Package['xfce4']
+  }
+
   package { 'vim-gtk': }
 
   package { 'git': }
