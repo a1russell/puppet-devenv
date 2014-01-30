@@ -73,4 +73,12 @@ class devenv ($user = 'vagrant') {
     require => [Package['xfce4'],
                 Class['java7']]
   }
+
+  file { 'idea shortcut':
+    path => "/home/${user}/.local/share/applications/idea.desktop",
+    owner => $user,
+    group => $user,
+    source => 'puppet:///modules/devenv/idea.desktop',
+    require => Class['idea::community']
+  }
 }

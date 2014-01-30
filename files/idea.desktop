@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=IntelliJ IDEA
+GenericName=Web Browser
+Exec=/opt/idea/bin/idea.sh %U
+Terminal=false
+Icon=/opt/idea/bin/idea.png
+Type=Application
+Categories=Development;IDE;Java;
