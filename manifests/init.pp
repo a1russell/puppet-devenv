@@ -95,12 +95,118 @@ class devenv ($user = 'vagrant') {
                 Class['java7']]
   }
 
+  exec { 'user applications directory':
+    command => 'mkdir -p .local/share/applications',
+    creates => "/home/${user}/.local/share/applications",
+    cwd => "/home/${user}",
+    path => '/bin',
+    user => $user
+  }
+
+  exec { 'panel config directory':
+    command => 'mkdir -p .config/xfce4/panel',
+    creates => "/home/${user}/.config/xfce4/panel",
+    cwd => "/home/${user}",
+    path => '/bin',
+    user => $user,
+    require => Package['xfce4']
+  }
+
+  file { 'terminal panel launcher directory':
+    path => "/home/${user}/.config/xfce4/panel/launcher-9",
+    ensure => 'directory',
+    owner => $user,
+    group => $user,
+    require => Exec['panel config directory']
+  }
+
+  file { 'terminal panel launcher':
+    path => "/home/${user}/.config/xfce4/panel/launcher-9/exo-terminal-emulator.desktop",
+    ensure => 'link',
+    target => '/usr/share/applications/exo-terminal-emulator.desktop',
+    owner => $user,
+    group => $user,
+    require => File['terminal panel launcher directory']
+  }
+
+  file { 'file manager panel launcher directory':
+    path => "/home/${user}/.config/xfce4/panel/launcher-10",
+    ensure => 'directory',
+    owner => $user,
+    group => $user,
+    require => Exec['panel config directory']
+  }
+
+  file { 'file manager panel launcher':
+    path => "/home/${user}/.config/xfce4/panel/launcher-10/exo-file-manager.desktop",
+    ensure => 'link',
+    target => '/usr/share/applications/exo-file-manager.desktop',
+    owner => $user,
+    group => $user,
+    require => File['file manager panel launcher directory']
+  }
+
+  file { 'web browser panel launcher directory':
+    path => "/home/${user}/.config/xfce4/panel/launcher-11",
+    ensure => 'directory',
+    owner => $user,
+    group => $user,
+    require => Exec['panel config directory']
+  }
+
+  file { 'web browser panel launcher':
+    path => "/home/${user}/.config/xfce4/panel/launcher-11/exo-web-browser.desktop",
+    ensure => 'link',
+    target => '/usr/share/applications/exo-web-browser.desktop',
+    owner => $user,
+    group => $user,
+    require => File['web browser panel launcher directory']
+  }
+
+  file { 'application finder panel launcher directory':
+    path => "/home/${user}/.config/xfce4/panel/launcher-12",
+    ensure => 'directory',
+    owner => $user,
+    group => $user,
+    require => Exec['panel config directory']
+  }
+
+  file { 'application finder panel launcher':
+    path => "/home/${user}/.config/xfce4/panel/launcher-12/xfce4-appfinder.desktop",
+    ensure => 'link',
+    target => '/usr/share/applications/xfce4-appfinder.desktop',
+    owner => $user,
+    group => $user,
+    require => File['application finder panel launcher directory']
+  }
+
+  exec { 'xfce-perchannel-xml directory':
+    command => 'mkdir -p .config/xfce4/xfconf/xfce-perchannel-xml',
+    creates => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml",
+    cwd => "/home/${user}",
+    path => '/bin',
+    user => $user,
+    require => Package['xfce4']
+  }
+
+  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
+    source => 'puppet:///modules/devenv/xfce4-panel.xml',
+    owner => $user,
+    group => $user,
+    require => [Exec['xfce-perchannel-xml directory'],
+                File['terminal panel launcher',
+                     'file manager panel launcher',
+                     'web browser panel launcher',
+                     'application finder panel launcher']]
+  }
+
   file { 'idea shortcut':
     path => "/home/${user}/.local/share/applications/idea.desktop",
     owner => $user,
     group => $user,
     source => 'puppet:///modules/devenv/idea.desktop',
-    require => Class['idea::community']
+    require => [Class['idea::community'],
+                Exec['user applications directory']]
   }
 
   file { 'idea panel launcher directory':
@@ -108,7 +214,8 @@ class devenv ($user = 'vagrant') {
     ensure => 'directory',
     owner => $user,
     group => $user,
-    require => File['idea shortcut']
+    require => [File['idea shortcut'],
+                Exec['panel config directory']]
   }
 
   file { 'idea panel launcher':
@@ -135,7 +242,8 @@ class devenv ($user = 'vagrant') {
       'set $items/value/#attribute/type string',
       'set $items/value/#attribute/value idea.desktop',
     ],
-    require => File['idea panel launcher']
+    require => File['idea panel launcher',
+                    "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml"]
   }
 
   augeas { 'order idea launcher in panel':
@@ -150,6 +258,7 @@ class devenv ($user = 'vagrant') {
       'set $pluginids/value[#attribute/value="15"]/#attribute/type int',
     ],
     onlyif => 'match channel/property[#attribute/name="panels"]/property[#attribute/name="panel-1"]/property[#attribute/name="plugin-ids"]/value[#attribute/value="15"] size == 0',
-    require => File['idea panel launcher']
+    require => File['idea panel launcher',
+                    "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml"]
   }
 }
