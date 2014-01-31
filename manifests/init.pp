@@ -103,6 +103,22 @@ class devenv ($user = 'vagrant') {
     user => $user
   }
 
+  exec { 'xfce-perchannel-xml directory':
+    command => 'mkdir -p .config/xfce4/xfconf/xfce-perchannel-xml',
+    creates => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml",
+    cwd => "/home/${user}",
+    path => '/bin',
+    user => $user,
+    require => Package['xfce4']
+  }
+
+  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml":
+    source => 'puppet:///modules/devenv/xfce4-power-manager.xml',
+    owner => $user,
+    group => $user,
+    require => Exec['xfce-perchannel-xml directory']
+  }
+
   exec { 'panel config directory':
     command => 'mkdir -p .config/xfce4/panel',
     creates => "/home/${user}/.config/xfce4/panel",
@@ -121,9 +137,9 @@ class devenv ($user = 'vagrant') {
   }
 
   file { 'terminal panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-9/exo-terminal-emulator.desktop",
+    path => "/home/${user}/.config/xfce4/panel/launcher-9/xfce4-terminal.desktop",
     ensure => 'link',
-    target => '/usr/share/applications/exo-terminal-emulator.desktop',
+    target => '/usr/share/applications/xfce4-terminal.desktop',
     owner => $user,
     group => $user,
     require => File['terminal panel launcher directory']
@@ -138,9 +154,9 @@ class devenv ($user = 'vagrant') {
   }
 
   file { 'file manager panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-10/exo-file-manager.desktop",
+    path => "/home/${user}/.config/xfce4/panel/launcher-10/Thunar.desktop",
     ensure => 'link',
-    target => '/usr/share/applications/exo-file-manager.desktop',
+    target => '/usr/share/applications/Thunar.desktop',
     owner => $user,
     group => $user,
     require => File['file manager panel launcher directory']
@@ -155,9 +171,9 @@ class devenv ($user = 'vagrant') {
   }
 
   file { 'web browser panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-11/exo-web-browser.desktop",
+    path => "/home/${user}/.config/xfce4/panel/launcher-11/google-chrome.desktop",
     ensure => 'link',
-    target => '/usr/share/applications/exo-web-browser.desktop',
+    target => '/usr/share/applications/google-chrome.desktop',
     owner => $user,
     group => $user,
     require => File['web browser panel launcher directory']
@@ -178,34 +194,6 @@ class devenv ($user = 'vagrant') {
     owner => $user,
     group => $user,
     require => File['application finder panel launcher directory']
-  }
-
-  exec { 'xfce-perchannel-xml directory':
-    command => 'mkdir -p .config/xfce4/xfconf/xfce-perchannel-xml',
-    creates => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml",
-    cwd => "/home/${user}",
-    path => '/bin',
-    user => $user,
-    require => Package['xfce4']
-  }
-
-  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
-    source => 'puppet:///modules/devenv/xfce4-panel.xml',
-    owner => $user,
-    group => $user,
-    replace => false,
-    require => [Exec['xfce-perchannel-xml directory'],
-                File['terminal panel launcher',
-                     'file manager panel launcher',
-                     'web browser panel launcher',
-                     'application finder panel launcher']]
-  }
-
-  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml":
-    source => 'puppet:///modules/devenv/xfce4-power-manager.xml',
-    owner => $user,
-    group => $user,
-    require => Exec['xfce-perchannel-xml directory']
   }
 
   file { 'idea shortcut':
@@ -235,35 +223,16 @@ class devenv ($user = 'vagrant') {
     require => File['idea panel launcher directory']
   }
 
-  augeas { 'add idea launcher to panel':
-    lens => 'Xml.lns',
-    incl => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml",
-    changes => [
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/#attribute/name plugin-15',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/#attribute/type string',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/#attribute/value launcher',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/property[#attribute/name="items"]/#attribute/name items',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/property[#attribute/name="items"]/#attribute/type array',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/property[#attribute/name="items"]/value/#attribute/type string',
-      'set channel/property[#attribute/name="plugins"]/property[#attribute/name="plugin-15"]/property[#attribute/name="items"]/value/#attribute/value idea.desktop',
-    ],
-    require => File['idea panel launcher',
-                    "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml"]
-  }
-
-  augeas { 'order idea launcher in panel':
-    lens => 'Xml.lns',
-    incl => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml",
-    changes => [
-      'defvar panels channel/property[#attribute/name="panels"]',
-      'defvar panel1 $panels/property[#attribute/name="panel-1"]',
-      'defvar pluginids $panel1/property[#attribute/name="plugin-ids"]',
-      'ins value after $pluginids/value[#attribute/value="9"]',
-      'set $pluginids/value[count(#attribute) = 0]/#attribute/value 15',
-      'set $pluginids/value[#attribute/value="15"]/#attribute/type int',
-    ],
-    onlyif => 'match channel/property[#attribute/name="panels"]/property[#attribute/name="panel-1"]/property[#attribute/name="plugin-ids"]/value[#attribute/value="15"] size == 0',
-    require => File['idea panel launcher',
-                    "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml"]
+  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
+    source => 'puppet:///modules/devenv/xfce4-panel.xml',
+    owner => $user,
+    group => $user,
+    replace => false,
+    require => [Exec['xfce-perchannel-xml directory'],
+                File['terminal panel launcher',
+                     'file manager panel launcher',
+                     'web browser panel launcher',
+                     'application finder panel launcher',
+                     'idea panel launcher']]
   }
 }
