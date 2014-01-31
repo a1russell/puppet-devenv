@@ -244,7 +244,6 @@ class devenv ($user = 'vagrant') {
     source => 'puppet:///modules/devenv/xfce4-panel.xml',
     owner => $user,
     group => $user,
-    replace => false,
     require => [Exec['xfce-perchannel-xml directory'],
                 File['terminal panel launcher',
                      'file manager panel launcher',
