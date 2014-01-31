@@ -223,6 +223,23 @@ class devenv ($user = 'vagrant') {
     require => File['idea panel launcher directory']
   }
 
+  file { 'gvim panel launcher directory':
+    path => "/home/${user}/.config/xfce4/panel/launcher-16",
+    ensure => 'directory',
+    owner => $user,
+    group => $user,
+    require => Exec['panel config directory']
+  }
+
+  file { 'gvim panel launcher':
+    path => "/home/${user}/.config/xfce4/panel/launcher-16/gvim.desktop",
+    ensure => 'link',
+    target => '/usr/share/applications/gvim.desktop',
+    owner => $user,
+    group => $user,
+    require => File['terminal panel launcher directory']
+  }
+
   file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
     source => 'puppet:///modules/devenv/xfce4-panel.xml',
     owner => $user,

@@ -24,6 +24,7 @@
         <value type="int" value="8"/>
         <value type="int" value="9"/>
         <value type="int" value="15"/>
+        <value type="int" value="16"/>
         <value type="int" value="10"/>
         <value type="int" value="11"/>
         <value type="int" value="12"/>
@@ -72,6 +73,11 @@
     <property name="plugin-15" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="idea.desktop"/>
+      </property>
+    </property>
+    <property name="plugin-16" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="gvim.desktop"/>
       </property>
     </property>
   </property>
