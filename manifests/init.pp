@@ -31,6 +31,11 @@ class devenv ($user = 'vagrant') {
     require => Class['java7']
   }
 
+  class { 'gradle':
+    version => '1.10',
+    require => Class['java7']
+  }
+
   class { 'idea::community':
     version => '13.0.2',
     build => '133.696',
