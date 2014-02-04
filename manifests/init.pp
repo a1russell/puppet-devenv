@@ -101,6 +101,8 @@ class devenv ($user = 'vagrant') {
     require => Class['googlechrome']
   }
 
+  rbenv::install { $user: }
+
   file { '/etc/profile.d/java.sh':
     source => 'puppet:///modules/devenv/java.sh',
     require => Class['java7']
