@@ -174,7 +174,8 @@ class devenv ($user = 'vagrant') {
     target => '/usr/share/applications/xfce4-terminal.desktop',
     owner => $user,
     group => $user,
-    require => File['terminal panel launcher directory']
+    require => [File['terminal panel launcher directory'],
+                Package['xfce4-goodies']]
   }
 
   file { 'file manager panel launcher directory':
@@ -208,7 +209,8 @@ class devenv ($user = 'vagrant') {
     target => '/usr/share/applications/google-chrome.desktop',
     owner => $user,
     group => $user,
-    require => File['web browser panel launcher directory']
+    require => [File['web browser panel launcher directory'],
+                Class['googlechrome']]
   }
 
   file { 'application finder panel launcher directory':
