@@ -88,6 +88,11 @@ class devenv ($user = 'vagrant') {
     require => Class['java7']
   }
 
+  package { 'scala':
+    name => ['scala', 'scala-doc'],
+    require => Java::Setup['java-7-oracle']
+  }
+
   class { 'idea::community':
     version => '13.0.2',
     build => '133.696',
