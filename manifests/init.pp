@@ -41,6 +41,29 @@ class devenv ($user = 'vagrant') {
 
   package { 'git': }
 
+  vcsrepo { "/home/${user}/.vim":
+    ensure => present,
+    provider => git,
+    source => 'https://github.com/a1russell/.vim.git',
+    user => $user,
+    require => Package['vim-gtk', 'git']
+  }
+
+  file { "/home/${user}/.vimrc":
+    ensure => 'link',
+    target => "/home/${user}/.vim/vimrc",
+    owner => $user,
+    group => $user,
+    require => Vcsrepo["/home/${user}/.vim"]
+  }
+
+  exec { "install vim bundles":
+    command => "vim '+BundleInstall' +qall &> /dev/null",
+    path => '/usr/bin',
+    user => $user,
+    require => File["/home/${user}/.vimrc"]
+  }
+
   class { 'googlechrome':
     require => Package['xfce4']
   }
