@@ -113,9 +113,11 @@ class devenv ($user = 'vagrant') {
     require => Class['java7']
   }
 
-  package { 'scala':
-    name => ['scala', 'scala-doc'],
-    require => Java::Setup['java-7-oracle']
+  archive { 'scala':
+    ensure => present,
+    checksum => false,
+    url => 'http://www.scala-lang.org/files/archive/scala-2.10.3.tgz',
+    target => '/opt'
   }
 
   class { 'idea::community':
