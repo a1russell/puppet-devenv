@@ -137,10 +137,9 @@ class devenv ($username = 'vagrant') {
     require => File['/opt/scala']
   }
 
-  file { '/opt/scala/doc/scala-devel-docs':
+  file { "/opt/scala-${scala_version}/doc/scala-devel-docs":
     ensure => directory,
-    require => [Archive['scala'],
-                File['/opt/scala']]
+    require => Archive['scala']
   }
 
   archive { 'scala-docs':
@@ -148,13 +147,13 @@ class devenv ($username = 'vagrant') {
     checksum => false,
     url => "http://www.scala-lang.org/files/archive/scala-docs-${scala_version}.txz",
     extension => 'txz',
-    target => '/opt/scala/doc/scala-devel-docs',
-    require => File['/opt/scala/doc/scala-devel-docs']
+    target => "/opt/scala-${scala_version}/doc/scala-devel-docs",
+    require => File["/opt/scala-${scala_version}/doc/scala-devel-docs"]
   }
 
-  file { '/opt/scala/doc/scala-devel-docs/api':
+  file { "/opt/scala-${scala_version}/doc/scala-devel-docs/api":
     ensure => link,
-    target => "/opt/scala/doc/scala-devel-docs/scala-docs-${scala_version}",
+    target => "/opt/scala-${scala_version}/doc/scala-devel-docs/scala-docs-${scala_version}",
     require => Archive['scala-docs']
   }
 
