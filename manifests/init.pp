@@ -1,4 +1,4 @@
-class devenv ($user = 'vagrant') {
+class devenv ($username = 'vagrant') {
   $idea_version = '13.0.2'
   $idea_build = '133.696'
   $gradle_version = '1.10'
@@ -36,37 +36,37 @@ class devenv ($user = 'vagrant') {
   }
 
   exec { 'echo "mode: off" > .xscreensaver':
-    creates => "/home/${user}/.xscreensaver",
-    cwd => "/home/${user}",
+    creates => "/home/${username}/.xscreensaver",
+    cwd => "/home/${username}",
     path => '/bin',
-    user => $user
+    user => $username
   }
 
   package { 'vim-gtk': }
 
   package { 'git': }
 
-  vcsrepo { "/home/${user}/.vim":
+  vcsrepo { "/home/${username}/.vim":
     ensure => present,
     provider => git,
     source => 'https://github.com/a1russell/.vim.git',
-    user => $user,
+    user => $username,
     require => Package['vim-gtk', 'git']
   }
 
-  file { "/home/${user}/.vimrc":
+  file { "/home/${username}/.vimrc":
     ensure => 'link',
-    target => "/home/${user}/.vim/vimrc",
-    owner => $user,
-    group => $user,
-    require => Vcsrepo["/home/${user}/.vim"]
+    target => "/home/${username}/.vim/vimrc",
+    owner => $username,
+    group => $username,
+    require => Vcsrepo["/home/${username}/.vim"]
   }
 
   exec { "install vim bundles":
     command => "vim '+BundleInstall' +qall &> /dev/null",
     path => '/usr/bin',
-    user => $user,
-    require => File["/home/${user}/.vimrc"]
+    user => $username,
+    require => File["/home/${username}/.vimrc"]
   }
 
   class { 'googlechrome':
@@ -82,31 +82,31 @@ class devenv ($user = 'vagrant') {
   }
 
   exec { "echo 'x-scheme-handler/http=exo-web-browser.desktop' >>\
-          /home/${user}/.local/share/applications/mimeapps.list":
+          /home/${username}/.local/share/applications/mimeapps.list":
     path => '/bin',
     unless => "grep -q 'x-scheme-handler/http\s*=' \
-               /home/${user}/.local/share/applications/mimeapps.list",
+               /home/${username}/.local/share/applications/mimeapps.list",
     require => Class['googlechrome']
   }
 
   exec { "echo 'x-scheme-handler/https=exo-web-browser.desktop' >>\
-          /home/${user}/.local/share/applications/mimeapps.list":
+          /home/${username}/.local/share/applications/mimeapps.list":
     path => '/bin',
     unless => "grep -q 'x-scheme-handler/https\s*=' \
-               /home/${user}/.local/share/applications/mimeapps.list",
+               /home/${username}/.local/share/applications/mimeapps.list",
     require => Class['googlechrome']
   }
 
   augeas { 'set xfce default browser':
     lens => 'Shellvars.lns',
-    incl => "/home/${user}/.config/xfce4/helpers.rc",
+    incl => "/home/${username}/.config/xfce4/helpers.rc",
     changes => [
       'set WebBrowser google-chrome'
     ],
     require => Class['googlechrome']
   }
 
-  rbenv::install { $user: }
+  rbenv::install { $username: }
 
   file { '/etc/profile.d/java.sh':
     source => 'puppet:///modules/devenv/java.sh',
@@ -134,155 +134,155 @@ class devenv ($user = 'vagrant') {
 
   exec { 'user applications directory':
     command => 'mkdir -p .local/share/applications',
-    creates => "/home/${user}/.local/share/applications",
-    cwd => "/home/${user}",
+    creates => "/home/${username}/.local/share/applications",
+    cwd => "/home/${username}",
     path => '/bin',
-    user => $user
+    user => $username
   }
 
   exec { 'xfce-perchannel-xml directory':
     command => 'mkdir -p .config/xfce4/xfconf/xfce-perchannel-xml',
-    creates => "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml",
-    cwd => "/home/${user}",
+    creates => "/home/${username}/.config/xfce4/xfconf/xfce-perchannel-xml",
+    cwd => "/home/${username}",
     path => '/bin',
-    user => $user,
+    user => $username,
     require => Package['xfce4']
   }
 
-  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml":
+  file { "/home/${username}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml":
     source => 'puppet:///modules/devenv/xfce4-power-manager.xml',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['xfce-perchannel-xml directory']
   }
 
   exec { 'panel config directory':
     command => 'mkdir -p .config/xfce4/panel',
-    creates => "/home/${user}/.config/xfce4/panel",
-    cwd => "/home/${user}",
+    creates => "/home/${username}/.config/xfce4/panel",
+    cwd => "/home/${username}",
     path => '/bin',
-    user => $user,
+    user => $username,
     require => Package['xfce4']
   }
 
   file { 'terminal panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-9",
+    path => "/home/${username}/.config/xfce4/panel/launcher-9",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['panel config directory']
   }
 
   file { 'terminal panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-9/xfce4-terminal.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-9/xfce4-terminal.desktop",
     ensure => 'link',
     target => '/usr/share/applications/xfce4-terminal.desktop',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => [File['terminal panel launcher directory'],
                 Package['xfce4-goodies']]
   }
 
   file { 'file manager panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-10",
+    path => "/home/${username}/.config/xfce4/panel/launcher-10",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['panel config directory']
   }
 
   file { 'file manager panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-10/Thunar.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-10/Thunar.desktop",
     ensure => 'link',
     target => '/usr/share/applications/Thunar.desktop',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => File['file manager panel launcher directory']
   }
 
   file { 'web browser panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-11",
+    path => "/home/${username}/.config/xfce4/panel/launcher-11",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['panel config directory']
   }
 
   file { 'web browser panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-11/google-chrome.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-11/google-chrome.desktop",
     ensure => 'link',
     target => '/usr/share/applications/google-chrome.desktop',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => [File['web browser panel launcher directory'],
                 Class['googlechrome']]
   }
 
   file { 'application finder panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-12",
+    path => "/home/${username}/.config/xfce4/panel/launcher-12",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['panel config directory']
   }
 
   file { 'application finder panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-12/xfce4-appfinder.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-12/xfce4-appfinder.desktop",
     ensure => 'link',
     target => '/usr/share/applications/xfce4-appfinder.desktop',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => File['application finder panel launcher directory']
   }
 
   file { 'idea shortcut':
-    path => "/home/${user}/.local/share/applications/idea.desktop",
-    owner => $user,
-    group => $user,
+    path => "/home/${username}/.local/share/applications/idea.desktop",
+    owner => $username,
+    group => $username,
     source => 'puppet:///modules/devenv/idea.desktop',
     require => [Class['idea::community'],
                 Exec['user applications directory']]
   }
 
   file { 'idea panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-15",
+    path => "/home/${username}/.config/xfce4/panel/launcher-15",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => [File['idea shortcut'],
                 Exec['panel config directory']]
   }
 
   file { 'idea panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-15/idea.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-15/idea.desktop",
     ensure => 'link',
-    target => "/home/${user}/.local/share/applications/idea.desktop",
-    owner => $user,
-    group => $user,
+    target => "/home/${username}/.local/share/applications/idea.desktop",
+    owner => $username,
+    group => $username,
     require => File['idea panel launcher directory']
   }
 
   file { 'gvim panel launcher directory':
-    path => "/home/${user}/.config/xfce4/panel/launcher-16",
+    path => "/home/${username}/.config/xfce4/panel/launcher-16",
     ensure => 'directory',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => Exec['panel config directory']
   }
 
   file { 'gvim panel launcher':
-    path => "/home/${user}/.config/xfce4/panel/launcher-16/gvim.desktop",
+    path => "/home/${username}/.config/xfce4/panel/launcher-16/gvim.desktop",
     ensure => 'link',
     target => '/usr/share/applications/gvim.desktop',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => File['terminal panel launcher directory']
   }
 
-  file { "/home/${user}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
+  file { "/home/${username}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml":
     source => 'puppet:///modules/devenv/xfce4-panel.xml',
-    owner => $user,
-    group => $user,
+    owner => $username,
+    group => $username,
     require => [Exec['xfce-perchannel-xml directory'],
                 File['terminal panel launcher',
                      'file manager panel launcher',
