@@ -55,7 +55,7 @@ class devenv ($username = 'vagrant') {
   }
 
   file { "/home/${username}/.vimrc":
-    ensure => 'link',
+    ensure => link,
     target => "/home/${username}/.vim/vimrc",
     owner => $username,
     group => $username,
@@ -167,7 +167,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'terminal panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-9",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => Exec['panel config directory']
@@ -175,7 +175,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'terminal panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-9/xfce4-terminal.desktop",
-    ensure => 'link',
+    ensure => link,
     target => '/usr/share/applications/xfce4-terminal.desktop',
     owner => $username,
     group => $username,
@@ -185,7 +185,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'file manager panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-10",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => Exec['panel config directory']
@@ -193,7 +193,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'file manager panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-10/Thunar.desktop",
-    ensure => 'link',
+    ensure => link,
     target => '/usr/share/applications/Thunar.desktop',
     owner => $username,
     group => $username,
@@ -202,7 +202,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'web browser panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-11",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => Exec['panel config directory']
@@ -210,7 +210,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'web browser panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-11/google-chrome.desktop",
-    ensure => 'link',
+    ensure => link,
     target => '/usr/share/applications/google-chrome.desktop',
     owner => $username,
     group => $username,
@@ -220,7 +220,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'application finder panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-12",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => Exec['panel config directory']
@@ -228,7 +228,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'application finder panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-12/xfce4-appfinder.desktop",
-    ensure => 'link',
+    ensure => link,
     target => '/usr/share/applications/xfce4-appfinder.desktop',
     owner => $username,
     group => $username,
@@ -246,7 +246,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'idea panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-15",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => [File['idea shortcut'],
@@ -255,7 +255,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'idea panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-15/idea.desktop",
-    ensure => 'link',
+    ensure => link,
     target => "/home/${username}/.local/share/applications/idea.desktop",
     owner => $username,
     group => $username,
@@ -264,7 +264,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'gvim panel launcher directory':
     path => "/home/${username}/.config/xfce4/panel/launcher-16",
-    ensure => 'directory',
+    ensure => directory,
     owner => $username,
     group => $username,
     require => Exec['panel config directory']
@@ -272,7 +272,7 @@ class devenv ($username = 'vagrant') {
 
   file { 'gvim panel launcher':
     path => "/home/${username}/.config/xfce4/panel/launcher-16/gvim.desktop",
-    ensure => 'link',
+    ensure => link,
     target => '/usr/share/applications/gvim.desktop',
     owner => $username,
     group => $username,
