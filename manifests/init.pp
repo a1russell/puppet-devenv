@@ -122,7 +122,8 @@ class devenv ($username = 'vagrant') {
     ensure => present,
     checksum => false,
     url => "http://www.scala-lang.org/files/archive/scala-${scala_version}.tgz",
-    target => '/opt'
+    target => '/opt',
+    require => Class['java7']
   }
 
   file { '/opt/scala':
