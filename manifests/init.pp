@@ -136,6 +136,27 @@ class devenv ($username = 'vagrant') {
     require => File['/opt/scala']
   }
 
+  file { '/opt/scala/doc/scala-devel-docs':
+    ensure => directory,
+    require => [Archive['scala'],
+                File['/opt/scala']]
+  }
+
+  archive { 'scala-docs':
+    ensure => present,
+    checksum => false,
+    url => "http://www.scala-lang.org/files/archive/scala-docs-${scala_version}.txz",
+    extension => 'txz',
+    target => '/opt/scala/doc/scala-devel-docs',
+    require => File['/opt/scala/doc/scala-devel-docs']
+  }
+
+  file { '/opt/scala/doc/scala-devel-docs/api':
+    ensure => link,
+    target => "/opt/scala/doc/scala-devel-docs/scala-docs-${scala_version}",
+    require => Archive['scala-docs']
+  }
+
   class { 'idea::community':
     version => $idea_version,
     build => $idea_build,
