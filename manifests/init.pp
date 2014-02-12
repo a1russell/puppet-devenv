@@ -1,4 +1,9 @@
 class devenv ($user = 'vagrant') {
+  $idea_version = '13.0.2'
+  $idea_build = '133.696'
+  $gradle_version = '1.10'
+  $scala_version = '2.10.3'
+
   include java7
   include apt
 
@@ -109,20 +114,20 @@ class devenv ($user = 'vagrant') {
   }
 
   class { 'gradle':
-    version => '1.10',
+    version => $gradle_version,
     require => Class['java7']
   }
 
   archive { 'scala':
     ensure => present,
     checksum => false,
-    url => 'http://www.scala-lang.org/files/archive/scala-2.10.3.tgz',
+    url => "http://www.scala-lang.org/files/archive/scala-${scala_version}.tgz",
     target => '/opt'
   }
 
   class { 'idea::community':
-    version => '13.0.2',
-    build => '133.696',
+    version => $idea_version,
+    build => $idea_build,
     require => [Package['xfce4'],
                 Class['java7']]
   }
