@@ -158,6 +158,28 @@ class devenv ($username = 'vagrant') {
     require => Archive['scala-docs']
   }
 
+  file { '/var/tmp/conscript_setup.sh':
+    source => 'puppet:///modules/devenv/conscript_setup.sh',
+    require => Archive['scala']
+  }
+
+  exec { 'conscript setup':
+    command => 'sh /var/tmp/conscript_setup.sh',
+    creates => "/home/${username}/bin/cs",
+    path => ['/usr/bin', '/bin'],
+    environment => "HOME=/home/${username}",
+    user => $username,
+    require => File['/var/tmp/conscript_setup.sh']
+  }
+
+  exec { 'cs n8han/giter8':
+    creates => "/home/${username}/bin/g8",
+    path => ["/home/${username}/bin", '/usr/lib/jvm/java-7-oracle/bin'],
+    timeout => 420,
+    user => $username,
+    require => Exec['conscript setup']
+  }
+
   class { 'idea::community':
     version => $idea_version,
     build => $idea_build,
