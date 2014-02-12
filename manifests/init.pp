@@ -187,6 +187,11 @@ class devenv ($username = 'vagrant') {
                 Class['java7']]
   }
 
+  file { '/etc/profile.d/idea.sh':
+    source => 'puppet:///modules/devenv/idea.sh',
+    require => Class['idea::community', 'java7']
+  }
+
   exec { 'user applications directory':
     command => 'mkdir -p .local/share/applications',
     creates => "/home/${username}/.local/share/applications",
