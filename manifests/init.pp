@@ -125,6 +125,17 @@ class devenv ($username = 'vagrant') {
     target => '/opt'
   }
 
+  file { '/opt/scala':
+    ensure => link,
+    target => "/opt/scala-${scala_version}",
+    require => Archive['scala']
+  }
+
+  file { '/etc/profile.d/scala.sh':
+    source => 'puppet:///modules/devenv/scala.sh',
+    require => File['/opt/scala']
+  }
+
   class { 'idea::community':
     version => $idea_version,
     build => $idea_build,
