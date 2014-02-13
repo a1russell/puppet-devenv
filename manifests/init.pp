@@ -26,7 +26,9 @@ class devenv ($username = 'vagrant') {
     username => $username
   }
 
-  rbenv::install { $username: }
+  rbenv::install { $username:
+    rc => '.bashrc'
+  }
 
   class { 'devenv::java': }
 
