@@ -18,6 +18,12 @@ class devenv ($username = 'vagrant') {
 
   package { 'git': }
 
+  file { "/home/${username}/proj":
+    ensure => directory,
+    owner => $username,
+    group => $username
+  }
+
   class { 'devenv::desktop':
     username => $username
   }

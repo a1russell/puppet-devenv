@@ -20,4 +20,12 @@ class devenv::idea ($username, $version, $build) {
     require => [Class['idea::community'],
                 Exec['user applications directory']]
   }
+
+  file { "/home/${username}/IdeaProjects":
+    ensure => link,
+    target => "/home/${username}/proj",
+    owner => $username,
+    group => $username,
+    require => File["/home/${username}/proj"]
+  }
 }
