@@ -39,6 +39,7 @@ class devenv ($username = 'vagrant') {
 
   class { 'gradle':
     version => $gradle_version,
+    timeout => 540,
     require => Class['java7']
   }
 
