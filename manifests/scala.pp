@@ -4,6 +4,8 @@ class devenv::scala ($username, $version) {
     checksum => false,
     url => "http://www.scala-lang.org/files/archive/scala-${version}.tgz",
     target => '/opt',
+    timeout => 250,
+    src_target => '/var/tmp',
     require => Class['java7']
   }
 
@@ -29,6 +31,8 @@ class devenv::scala ($username, $version) {
     url => "http://www.scala-lang.org/files/archive/scala-docs-${version}.txz",
     extension => 'txz',
     target => "/opt/scala-${version}/doc/scala-devel-docs",
+    timeout => 360,
+    src_target => '/var/tmp',
     require => File["/opt/scala-${version}/doc/scala-devel-docs"]
   }
 
