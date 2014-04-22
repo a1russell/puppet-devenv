@@ -1,7 +1,7 @@
 class devenv ($username = 'vagrant') {
   $idea_version = '13.1.2'
   $idea_build = '135.690'
-  $gradle_version = '1.10'
+  $gradle_version = '1.11'
   $scala_version = '2.10.3'
 
   include apt
