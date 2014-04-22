@@ -2,7 +2,7 @@ class devenv::idea ($username, $version, $build) {
   class { 'idea::community':
     version => $version,
     build => $build,
-    timeout => 1800,
+    timeout => 2700,
     require => [Package['xfce4'],
                 Class['java7']]
   }
